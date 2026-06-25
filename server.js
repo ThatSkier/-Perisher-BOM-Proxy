@@ -27,13 +27,21 @@ app.get("/api/observations", async (req, res) => {
 
   try {
     const response = await fetch(url, {
+      redirect: "follow",
       headers: {
-        "User-Agent": "PerisherSnowmakingDashboard/1.0 (contact@example.com)",
-        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-AU,en;q=0.9",
+        "Referer": "https://www.bom.gov.au/",
       },
     });
     if (!response.ok) {
-      return res.status(response.status).json({ error: "BOM API error" });
+      const body = await response.text();
+      return res.status(response.status).json({
+        error: "BOM API error",
+        status: response.status,
+        body: body.slice(0, 500),
+      });
     }
     const data = await response.json();
     res.json(data);
